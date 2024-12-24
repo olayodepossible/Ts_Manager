@@ -10,4 +10,8 @@ export class AuthController {
   async createUser(@Body() userDto: UserDto) {
     return this.authService.signup(userDto);
   }
+  @Post('/signin')
+  async signInUser(@Body() userDto: UserDto): Promise<{ token: string }> {
+    return this.authService.signIn(userDto);
+  }
 }
