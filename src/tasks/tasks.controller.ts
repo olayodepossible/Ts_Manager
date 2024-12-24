@@ -17,20 +17,17 @@ export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get()
-  getTasks(@Body() filterDto: FilterTaskDto): Task[] {
-    if (Object.keys(filterDto).length) {
-      return this.tasksService.getTaskWithFilter(filterDto);
-    }
-    return this.tasksService.getAllTasks();
+  getTasks(@Body() filterDto: FilterTaskDto): Promise<Task[]> {
+    return this.tasksService.getAllTasks(filterDto);
   }
 
   @Get('/:id')
-  getTask(@Param('id') id: string): Task {
+  getTask(@Param('id') id: string): Promise<Task> {
     return this.tasksService.getTaskById(id);
   }
 
   @Post()
-  createTask(@Body() createTaskDto: CreateTaskDto): Task {
+  createTask(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
     return this.tasksService.createTask(createTaskDto);
   }
 
@@ -43,7 +40,7 @@ export class TasksController {
   updateTaskStatus(
     @Param('id') id: string,
     @Body('status') status: TaskStatus,
-  ): Task {
+  ): Promise<Task> {
     return this.tasksService.updateTaskStatus(id, status);
   }
 }
