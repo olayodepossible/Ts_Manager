@@ -9,17 +9,17 @@ import { User } from 'src/auth/user.entity';
 export class TasksService {
   constructor(private readonly taskRepository: TaskRepository) {}
 
-  getAllTasks(filterDto: FilterTaskDto): Promise<Task[]> {
-    return this.taskRepository.getTasks(filterDto);
+  getAllTasks(filterDto: FilterTaskDto, user: User): Promise<Task[]> {
+    return this.taskRepository.getTasks(filterDto, user);
   }
 
   createTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
     return this.taskRepository.createTask(createTaskDto, user);
   }
 
-  async getTaskById(id: string): Promise<Task> {
+  async getTaskById(id: string, user: User): Promise<Task> {
     const foundTask = await this.taskRepository.findOne({
-      where: { id },
+      where: { id, user },
     });
     if (!foundTask) {
       throw new NotFoundException(`The task with id: ${id} is not found`);
@@ -34,8 +34,12 @@ export class TasksService {
     }
   }
 
-  async updateTaskStatus(id: string, status: TaskStatus): Promise<Task> {
-    const task = await this.getTaskById(id);
+  async updateTaskStatus(
+    id: string,
+    status: TaskStatus,
+    user: User,
+  ): Promise<Task> {
+    const task = await this.getTaskById(id, user);
     return { ...task, status };
   }
 }

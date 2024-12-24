@@ -12,16 +12,17 @@ export class TaskRepository extends Repository<Task> {
     super(Task, dataSource.createEntityManager());
   }
 
-  async getTasks(filterDto: FilterTaskDto): Promise<Task[]> {
+  async getTasks(filterDto: FilterTaskDto, user: User): Promise<Task[]> {
     const { status, search } = filterDto;
     const query = this.createQueryBuilder('task');
+    query.where(user);
     if (status) {
       query.andWhere('task.status = :status', { status });
     }
 
     if (search) {
       query.andWhere(
-        'LOWWER(task.title) LIKE LOWWER(:search) OR LOWWER(task.desc) LIKE LOWWER(:search)',
+        '(LOWWER(task.title) LIKE LOWWER(:search) OR LOWWER(task.desc) LIKE LOWWER(:search))',
         { search: `%${search}%` },
       );
     }
